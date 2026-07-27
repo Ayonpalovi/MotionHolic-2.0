@@ -99,6 +99,155 @@ if (!prefersReducedMotion && !isCoarsePointer) {
   });
 }
 
+// ----- Drifting smoke behind the hero (WebGL) -----
+// Wispy volumetric smoke that travels right to left and slowly changes shape,
+// like the reference site. Falls back to the CSS blobs if WebGL is unavailable.
+(function heroSmoke() {
+  const canvas = document.getElementById('heroCanvas');
+  if (!canvas || prefersReducedMotion) return;
+
+  const gl = canvas.getContext('webgl', { antialias: false, alpha: true, premultipliedAlpha: false });
+  if (!gl) return;
+
+  const VERT = `attribute vec2 p; void main(){ gl_Position = vec4(p, 0.0, 1.0); }`;
+
+  const FRAG = `
+    precision highp float;
+    uniform vec2 u_res;
+    uniform float u_time;
+
+    vec2 hash(vec2 p) {
+      p = vec2(dot(p, vec2(127.1, 311.7)), dot(p, vec2(269.5, 183.3)));
+      return -1.0 + 2.0 * fract(sin(p) * 43758.5453123);
+    }
+
+    float noise(vec2 p) {
+      const float K1 = 0.366025404;
+      const float K2 = 0.211324865;
+      vec2 i = floor(p + (p.x + p.y) * K1);
+      vec2 a = p - i + (i.x + i.y) * K2;
+      float m = step(a.y, a.x);
+      vec2 o = vec2(m, 1.0 - m);
+      vec2 b = a - o + K2;
+      vec2 c = a - 1.0 + 2.0 * K2;
+      vec3 h = max(0.5 - vec3(dot(a, a), dot(b, b), dot(c, c)), 0.0);
+      vec3 n = h * h * h * h * vec3(dot(a, hash(i)), dot(b, hash(i + o)), dot(c, hash(i + 1.0)));
+      return dot(n, vec3(70.0));
+    }
+
+    float fbm(vec2 p) {
+      float v = 0.0;
+      float a = 0.5;
+      for (int i = 0; i < 3; i++) {   // 3 octaves keeps the wisps broad and soft
+        v += a * noise(p);
+        p *= 2.0;
+        a *= 0.5;
+      }
+      return v;
+    }
+
+    void main() {
+      vec2 uv = (gl_FragCoord.xy - 0.5 * u_res) / u_res.y;
+
+      float drift = u_time * 0.035;   // horizontal travel, right -> left
+      float morph = u_time * 0.012;   // slow change of shape along the way
+
+      // sample point moves +x over time, so the smoke reads as moving left
+      vec2 p = vec2(uv.x * 0.75 + drift, uv.y * 1.15);
+
+      // domain warp gives the billowing, curling structure
+      vec2 q = vec2(fbm(p * 0.40 + morph), fbm(p * 0.40 + vec2(3.4, 1.7) - morph));
+      vec2 r = vec2(
+        fbm(p * 0.40 + 1.4 * q + vec2(1.7, 9.2) + morph * 1.3),
+        fbm(p * 0.40 + 1.4 * q + vec2(8.3, 2.8) - morph * 0.8)
+      );
+      float f = fbm(p * 0.40 + 1.54 * r);
+
+      // carve wisps out of the field rather than filling the whole screen
+      float wisp = smoothstep(0.02, 0.62, f);
+      wisp *= smoothstep(0.95, 0.25, abs(uv.y) * 1.35);   // fade top and bottom
+      float edge = smoothstep(1.15, 0.35, abs(uv.x) * 0.85); // fade left and right
+      wisp *= edge;
+
+      // faint warm cast so it sits with the gold accents instead of fighting them
+      vec3 col = mix(vec3(0.82, 0.82, 0.84), vec3(0.95, 0.86, 0.70), pow(wisp, 3.0) * 0.4);
+
+      float alpha = wisp * 0.26;
+      gl_FragColor = vec4(col * alpha, alpha);
+    }
+  `;
+
+  function compile(type, src) {
+    const sh = gl.createShader(type);
+    gl.shaderSource(sh, src);
+    gl.compileShader(sh);
+    return gl.getShaderParameter(sh, gl.COMPILE_STATUS) ? sh : null;
+  }
+
+  const vs = compile(gl.VERTEX_SHADER, VERT);
+  const fs = compile(gl.FRAGMENT_SHADER, FRAG);
+  if (!vs || !fs) return;
+
+  const prog = gl.createProgram();
+  gl.attachShader(prog, vs);
+  gl.attachShader(prog, fs);
+  gl.linkProgram(prog);
+  if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return;
+  gl.useProgram(prog);
+
+  gl.enable(gl.BLEND);
+  gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+
+  const buf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+  const loc = gl.getAttribLocation(prog, 'p');
+  gl.enableVertexAttribArray(loc);
+  gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+
+  const uRes = gl.getUniformLocation(prog, 'u_res');
+  const uTime = gl.getUniformLocation(prog, 'u_time');
+
+  const SCALE = 0.5; // soft effect, so half resolution is invisible and much cheaper
+  function resize() {
+    const w = Math.max(1, Math.round(canvas.clientWidth * SCALE));
+    const h = Math.max(1, Math.round(canvas.clientHeight * SCALE));
+    if (canvas.width !== w || canvas.height !== h) {
+      canvas.width = w;
+      canvas.height = h;
+      gl.viewport(0, 0, w, h);
+    }
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  // hide the CSS fallback blobs now that the canvas is running
+  canvas.parentElement.classList.add('canvas-active');
+  canvas.classList.add('is-live');
+
+  let visible = true;
+  let rafId = null;
+  const start = performance.now();
+
+  function draw(now) {
+    if (!visible) { rafId = null; return; }
+    resize();
+    gl.clearColor(0, 0, 0, 0);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.uniform2f(uRes, canvas.width, canvas.height);
+    gl.uniform1f(uTime, (now - start) / 1000);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+    rafId = requestAnimationFrame(draw);
+  }
+
+  new IntersectionObserver((entries) => {
+    visible = entries[0].isIntersecting;
+    if (visible && rafId === null) rafId = requestAnimationFrame(draw);
+  }, { threshold: 0 }).observe(canvas);
+
+  rafId = requestAnimationFrame(draw);
+})();
+
 // ----- Animated flowing-silk backdrop for the final CTA (WebGL) -----
 // Domain-warped fractal noise, rendered on the GPU. Falls back silently to the
 // static gradient underneath if WebGL is unavailable.
