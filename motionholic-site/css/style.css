@@ -198,8 +198,8 @@ h2 { font-size: clamp(34px, 4.6vw, 52px); }
 }
 .hero__title {
   font-size: clamp(36px, 5vw, 56px);
-  font-weight: 700;
-  letter-spacing: -0.02em; /* bold serif needs a little tightening at this size */
+  font-weight: 400; /* matches the reference hero: solid, not light, not heavy */
+  letter-spacing: -0.01em;
   color: var(--white);
 }
 .hero-line { display: block; }
