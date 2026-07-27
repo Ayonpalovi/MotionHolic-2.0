@@ -177,7 +177,9 @@ if (!prefersReducedMotion && !isCoarsePointer) {
       // faint warm cast so it sits with the gold accents instead of fighting them
       vec3 col = mix(vec3(0.90, 0.90, 0.92), vec3(0.98, 0.90, 0.74), pow(wisp, 3.0) * 0.4);
 
-      float alpha = wisp * 0.75;
+      // Cap the brightest wisps so a hot streak can never drift across the
+      // headline and swallow it, then keep the overall level gentle.
+      float alpha = min(wisp, 0.78) * 0.5;
       gl_FragColor = vec4(col * alpha, alpha);
     }
   `;
