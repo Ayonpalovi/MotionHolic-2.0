@@ -117,6 +117,10 @@ if (!prefersReducedMotion && !isCoarsePointer) {
     uniform float u_time;
 
     vec2 hash(vec2 p) {
+      // Lattice coordinates are wrapped before hashing. The smoke drifts forever,
+      // so without this the inputs grow large enough to lose float precision and
+      // the noise flattens out after a few minutes, fading the smoke away.
+      p = mod(p, 289.0);
       p = vec2(dot(p, vec2(127.1, 311.7)), dot(p, vec2(269.5, 183.3)));
       return -1.0 + 2.0 * fract(sin(p) * 43758.5453123);
     }
@@ -149,7 +153,7 @@ if (!prefersReducedMotion && !isCoarsePointer) {
     void main() {
       vec2 uv = (gl_FragCoord.xy - 0.5 * u_res) / u_res.y;
 
-      float drift = u_time * 0.035;   // horizontal travel, right -> left
+      float drift = u_time * 0.035;   // horizontal travel, right -> left, forever
       float morph = u_time * 0.012;   // slow change of shape along the way
 
       // sample point moves +x over time, so the smoke reads as moving left
@@ -163,16 +167,17 @@ if (!prefersReducedMotion && !isCoarsePointer) {
       );
       float f = fbm(p * 0.40 + 1.54 * r);
 
-      // carve wisps out of the field rather than filling the whole screen
-      float wisp = smoothstep(0.02, 0.62, f);
+      // carve wisps out of the field. The lower bound is negative so there is
+      // always some smoke on screen rather than long empty stretches.
+      float wisp = smoothstep(-0.22, 0.58, f);
       wisp *= smoothstep(0.95, 0.25, abs(uv.y) * 1.35);   // fade top and bottom
       float edge = smoothstep(1.15, 0.35, abs(uv.x) * 0.85); // fade left and right
       wisp *= edge;
 
       // faint warm cast so it sits with the gold accents instead of fighting them
-      vec3 col = mix(vec3(0.82, 0.82, 0.84), vec3(0.95, 0.86, 0.70), pow(wisp, 3.0) * 0.4);
+      vec3 col = mix(vec3(0.90, 0.90, 0.92), vec3(0.98, 0.90, 0.74), pow(wisp, 3.0) * 0.4);
 
-      float alpha = wisp * 0.26;
+      float alpha = wisp * 0.75;
       gl_FragColor = vec4(col * alpha, alpha);
     }
   `;
@@ -225,27 +230,29 @@ if (!prefersReducedMotion && !isCoarsePointer) {
   canvas.parentElement.classList.add('canvas-active');
   canvas.classList.add('is-live');
 
-  let visible = true;
-  let rafId = null;
+  // The loop runs for as long as the page is open. Visibility is checked inside
+  // the frame instead of by an observer, so the animation can never be left
+  // switched off by an early "not intersecting" callback.
   const start = performance.now();
 
-  function draw(now) {
-    if (!visible) { rafId = null; return; }
-    resize();
-    gl.clearColor(0, 0, 0, 0);
-    gl.clear(gl.COLOR_BUFFER_BIT);
-    gl.uniform2f(uRes, canvas.width, canvas.height);
-    gl.uniform1f(uTime, (now - start) / 1000);
-    gl.drawArrays(gl.TRIANGLES, 0, 3);
-    rafId = requestAnimationFrame(draw);
+  function onScreen() {
+    const r = canvas.getBoundingClientRect();
+    return r.bottom > 0 && r.top < window.innerHeight;
   }
 
-  new IntersectionObserver((entries) => {
-    visible = entries[0].isIntersecting;
-    if (visible && rafId === null) rafId = requestAnimationFrame(draw);
-  }, { threshold: 0 }).observe(canvas);
+  function draw(now) {
+    if (onScreen()) {
+      resize();
+      gl.clearColor(0, 0, 0, 0);
+      gl.clear(gl.COLOR_BUFFER_BIT);
+      gl.uniform2f(uRes, canvas.width, canvas.height);
+      gl.uniform1f(uTime, (now - start) / 1000);
+      gl.drawArrays(gl.TRIANGLES, 0, 3);
+    }
+    requestAnimationFrame(draw); // always reschedule — the loop never ends
+  }
 
-  rafId = requestAnimationFrame(draw);
+  requestAnimationFrame(draw);
 })();
 
 // ----- Animated flowing-silk backdrop for the final CTA (WebGL) -----
