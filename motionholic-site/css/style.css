@@ -444,6 +444,22 @@ h2 { font-size: clamp(34px, 4.6vw, 52px); }
 }
 .price-card .btn { text-align: center; }
 
+/* 3-up pricing */
+.pricing__grid--three { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+.pricing__grid--three .price-card { padding: 42px 30px; }
+.price-card__inherits {
+  margin: -14px 0 22px;
+  font-size: 13px;
+  font-style: italic;
+  color: var(--muted-2);
+}
+.price-card__value {
+  margin: -18px 0 22px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #ffb433;
+}
+
 /* ================= FAQ ================= */
 .faq__list {
   margin-top: 56px;
@@ -1102,6 +1118,7 @@ h2 { font-size: clamp(34px, 4.6vw, 52px); }
 /* ================= Responsive ================= */
 @media (max-width: 1024px) {
   .offers__grid { grid-template-columns: repeat(2, 1fr); }
+  .pricing__grid--three { grid-template-columns: minmax(0, 460px); }
   .work__grid { grid-template-columns: repeat(3, 1fr); }
   .process__grid { grid-template-columns: repeat(2, 1fr); }
   .why__grid { grid-template-columns: 1fr; gap: 40px; }
@@ -1127,7 +1144,8 @@ h2 { font-size: clamp(34px, 4.6vw, 52px); }
 @media (max-width: 720px) {
   .section { padding: 80px 0; }
   .offers__grid, .testimonials__grid,
-  .process__grid, .pricing__grid { grid-template-columns: 1fr; }
+  .process__grid, .pricing__grid,
+  .pricing__grid--three { grid-template-columns: 1fr; }
   /* 2-up on phones so the vertical clips stay legible */
   .work__grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
   .work-card__tag { font-size: 11px; margin-top: 8px; }
