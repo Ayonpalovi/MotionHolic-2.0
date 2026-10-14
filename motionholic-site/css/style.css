@@ -1107,6 +1107,153 @@ h2 { font-size: clamp(34px, 4.6vw, 52px); }
 .footer__row a { color: rgba(255, 255, 255, 0.55); text-decoration: none; }
 .footer__row a:hover { color: #ffb433; }
 
+/* ================= Free Playbooks ================= */
+.pbx { padding: 70px 0; }
+.pbx__panel {
+  position: relative;
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1fr);
+  align-items: center;
+  gap: 56px;
+  padding: 44px 56px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 180, 51, 0.22);
+  background:
+    radial-gradient(circle at 12% 50%, rgba(255, 180, 51, 0.14), transparent 45%),
+    var(--near-black);
+  overflow: hidden;
+}
+.pbx__body { min-width: 0; }
+.pbx__stack { position: relative; height: 290px; }
+.pbx__cover {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 170px;
+  aspect-ratio: 595 / 842;
+  object-fit: cover;
+  border-radius: 6px;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition:
+    transform 0.75s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.6s ease,
+    filter 0.6s ease,
+    box-shadow 0.6s ease;
+  will-change: transform, opacity;
+}
+/* Three slots the books move between. Back slots are smaller, dimmer and slightly blurred. */
+.pbx__cover--front {
+  z-index: 3;
+  transform: translate(-50%, -52%) rotate(0deg) scale(1);
+  opacity: 1;
+  filter: none;
+  box-shadow: 0 24px 50px rgba(0, 0, 0, 0.65), 0 0 40px rgba(255, 180, 51, 0.12);
+}
+.pbx__cover--right {
+  z-index: 2;
+  transform: translate(-5%, -50%) rotate(10deg) scale(0.92);
+  opacity: 0.55;
+  filter: brightness(0.7) blur(0.6px);
+}
+.pbx__cover--left {
+  z-index: 1;
+  transform: translate(-95%, -50%) rotate(-12deg) scale(0.9);
+  opacity: 0.4;
+  filter: brightness(0.6) blur(0.8px);
+}
+.pbx__panel:hover .pbx__cover--right { transform: translate(5%, -50%) rotate(13deg) scale(0.92); }
+.pbx__panel:hover .pbx__cover--left { transform: translate(-105%, -50%) rotate(-15deg) scale(0.9); }
+/* Off-stage positions: books enter from the far left and leave off the far right */
+.pbx__cover--out-left {
+  z-index: 0;
+  transform: translate(-150%, -50%) rotate(-18deg) scale(0.82);
+  opacity: 0;
+  filter: brightness(0.5) blur(1.5px);
+}
+.pbx__cover--out-right {
+  z-index: 0;
+  transform: translate(55%, -50%) rotate(18deg) scale(0.82);
+  opacity: 0;
+  filter: brightness(0.5) blur(1.5px);
+}
+/* Instant reposition used to park a book off-stage without it being seen moving */
+.pbx__cover.is-prep { transition: none; }
+.pbx__cover.is-dim { opacity: 0; }
+
+.pbx__eyebrow {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #ffb433;
+}
+.pbx h2 { font-size: clamp(28px, 3.2vw, 38px); margin-top: 10px; }
+.pbx__sub { margin-top: 12px; font-size: 16px; color: var(--muted-2); max-width: 560px; }
+.pbx__chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
+.pbx__chip {
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  padding: 8px 15px;
+  cursor: pointer;
+  transition: color 0.3s ease, border-color 0.3s ease, background 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+}
+.pbx__chip:hover { border-color: rgba(255, 180, 51, 0.5); color: #fff; }
+.pbx__chip:active { transform: scale(0.96); }
+.pbx__chip.is-active {
+  background: rgba(255, 180, 51, 0.14);
+  border-color: #ffb433;
+  color: #ffd999;
+  box-shadow: 0 0 18px rgba(255, 180, 51, 0.18);
+}
+.pbx__chip.is-pop { animation: pbx-chip-pop 0.45s cubic-bezier(0.22, 1, 0.36, 1); }
+@keyframes pbx-chip-pop {
+  0% { transform: scale(0.94); box-shadow: 0 0 0 0 rgba(255, 180, 51, 0.45); }
+  55% { transform: scale(1.04); }
+  100% { transform: scale(1); box-shadow: 0 0 18px 0 rgba(255, 180, 51, 0.18); }
+}
+/* Button label and page count slide in when the niche changes */
+.pbx__swap-in { display: inline-block; animation: pbx-text-in 0.45s cubic-bezier(0.22, 1, 0.36, 1); }
+@keyframes pbx-text-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+/* "Not listed?" — sits at the end of the niche row as a dashed, chip-sized call link */
+.pbx__ask {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #ffb433;
+  text-decoration: none;
+  border: 1px dashed rgba(255, 180, 51, 0.5);
+  border-radius: 999px;
+  padding: 7px 15px 7px 11px;
+  transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+.pbx__ask svg {
+  width: 13px;
+  height: 13px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.pbx__ask:hover { background: rgba(255, 180, 51, 0.1); border-color: #ffb433; color: #ffd999; }
+.pbx__ask:hover svg { transform: rotate(90deg); }
+/* Phone version: one quiet line under the download button (hidden on larger screens) */
+.pbx__ask-line { display: none; }
+
+.pbx__actions { display: flex; align-items: center; gap: 18px; margin-top: 26px; flex-wrap: wrap; }
+.pbx__meta { font-size: 14px; color: var(--muted-2); }
+
 /* ================= Scroll reveal ================= */
 .reveal {
   opacity: 0;
@@ -1118,6 +1265,8 @@ h2 { font-size: clamp(34px, 4.6vw, 52px); }
 /* ================= Responsive ================= */
 @media (max-width: 1024px) {
   .offers__grid { grid-template-columns: repeat(2, 1fr); }
+  .pbx__panel { grid-template-columns: 240px minmax(0, 1fr); gap: 32px; padding: 36px 32px; }
+  .pbx__cover { width: 140px; }
   .pricing__grid--three { grid-template-columns: minmax(0, 460px); }
   .work__grid { grid-template-columns: repeat(3, 1fr); }
   .process__grid { grid-template-columns: repeat(2, 1fr); }
@@ -1149,6 +1298,26 @@ h2 { font-size: clamp(34px, 4.6vw, 52px); }
   /* 2-up on phones so the vertical clips stay legible */
   .work__grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
   .work-card__tag { font-size: 11px; margin-top: 8px; }
+  /* compact playbooks: cover stack on top, chips scroll sideways */
+  .pbx { padding: 50px 0; }
+  .pbx__panel { grid-template-columns: minmax(0, 1fr); gap: 8px; padding: 28px 20px 30px; text-align: center; }
+  .pbx__stack { height: 200px; }
+  .pbx__cover { width: 116px; }
+  .pbx__sub { margin-left: auto; margin-right: auto; font-size: 15px; }
+  .pbx__chips { flex-wrap: nowrap; overflow-x: auto; margin: 20px -20px 0; padding: 0 20px 4px; scrollbar-width: none; }
+  .pbx__chips::-webkit-scrollbar { display: none; }
+  .pbx__chip { flex: none; }
+  .pbx__actions { flex-direction: column; gap: 10px; }
+  .pbx__actions .btn { width: 100%; white-space: normal; }
+  .pbx__chips .pbx__ask { display: none; }
+  .pbx__ask-line {
+    display: block;
+    margin-top: 16px;
+    font-size: 14px;
+    color: var(--muted-2);
+    text-decoration: none;
+  }
+  .pbx__ask-line span { color: #ffb433; font-weight: 500; }
   .work-card .video-embed__play { width: 40px; height: 40px; }
   .work-card .video-embed__play span {
     border-left-width: 12px; border-top-width: 7px; border-bottom-width: 7px;
@@ -1179,6 +1348,8 @@ h2 { font-size: clamp(34px, 4.6vw, 52px); }
   .tile { opacity: 1; transform: none; transition: none; }
   .hero-line, .hero__sub, .hero__cta { animation-duration: 0.01s; animation-delay: 0s; }
   .reveal { transition: none; opacity: 1; transform: none; }
+  .pbx__cover { transition: opacity 0.2s ease; }
+  .pbx__chip.is-pop, .pbx__swap-in { animation: none; }
 }
 
 /* ================= Legal pages ================= */
