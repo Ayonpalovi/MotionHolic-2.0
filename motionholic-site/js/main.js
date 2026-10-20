@@ -1,5 +1,19 @@
 // Scroll-reveal, nav behavior, and small interactions
 
+// ----- Pricing: change prices here, they update everywhere on the page -----
+const PRICES = {
+  starter: { amount: 599, promo: 419 }, // one-time; promo = first 3 clients
+  monthly: { amount: 1799 },            // per month
+  launch:  { amount: 3799 },            // per month
+};
+const fmtPrice = (n) => '$' + n.toLocaleString('en-US');
+Object.entries(PRICES).forEach(([key, p]) => {
+  document.querySelectorAll(`[data-price="${key}"]`).forEach((el) => (el.textContent = fmtPrice(p.amount)));
+  if (p.promo != null) {
+    document.querySelectorAll(`[data-price-promo="${key}"]`).forEach((el) => (el.textContent = fmtPrice(p.promo)));
+  }
+});
+
 // ----- Scroll reveal (staggered fade-up) -----
 const revealEls = document.querySelectorAll('.reveal');
 const io = new IntersectionObserver(
@@ -431,19 +445,6 @@ document.querySelectorAll('.video-embed').forEach((embed) => {
   });
 });
 
-// ----- Featured work tabs -----
-const workTabs = document.querySelectorAll('.work__tab');
-const workCards = document.querySelectorAll('.work-card');
-workTabs.forEach((tab) => {
-  tab.addEventListener('click', () => {
-    workTabs.forEach((t) => t.classList.toggle('is-active', t === tab));
-    const filter = tab.dataset.filter;
-    workCards.forEach((card) => {
-      card.classList.toggle('is-hidden', filter !== 'all' && card.dataset.category !== filter);
-    });
-  });
-});
-
 // ----- FAQ accordion -----
 document.querySelectorAll('.faq-item').forEach((item) => {
   const q = item.querySelector('.faq-item__q');
@@ -490,11 +491,7 @@ links.querySelectorAll('a').forEach((a) =>
   a.addEventListener('click', () => links.classList.remove('is-open'))
 );
 
-// ----- Free playbooks: one-way carousel loop -----
-// Free playbooks: a one-way carousel loop. On every pick the stack turns
-// left-to-right: the chosen book comes in from the left to the middle, the
-// middle book moves right, the right book slides off, and the next niche
-// in the loop fades into the left slot.
+// ----- Free playbooks: two niches, the chosen book comes to the front -----
 (function () {
   var chips = Array.prototype.slice.call(document.querySelectorAll('.pbx__chip'));
   var stack = document.querySelector('.pbx__stack');
@@ -503,84 +500,22 @@ links.querySelectorAll('a').forEach((a) =>
   var meta = document.getElementById('pbxMeta');
   if (!chips.length || !stack || !dl) return;
 
-  var SLOTS = ['front', 'right', 'left', 'out-left', 'out-right'];
-  var slugs = chips.map(function (c) { return c.dataset.slug; });
-
-  function coverSrc(slug) { return 'assets/playbooks/' + slug + '-cover.jpg'; }
-  function slot(name) { return stack.querySelector('.pbx__cover--' + name); }
-  function setSlot(img, name) {
-    SLOTS.forEach(function (s) { img.classList.remove('pbx__cover--' + s); });
-    img.classList.add('pbx__cover--' + name);
-  }
-  function setBook(img, slug) { img.src = coverSrc(slug); img.dataset.slug = slug; }
-  // Jump a book to an off-stage spot with its new cover, with no visible motion
-  function park(img, name, slug) {
-    img.classList.add('is-prep');
-    setSlot(img, name);
-    if (slug) setBook(img, slug);
-    void img.offsetWidth;
-    img.classList.remove('is-prep');
-  }
   function replay(el, cls) { el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); }
-  // Next niche around the loop that is not already on show
-  function nextAfter(slug, avoid) {
-    var i = slugs.indexOf(slug);
-    for (var k = 1; k < slugs.length; k++) {
-      var s = slugs[(i + k) % slugs.length];
-      if (avoid.indexOf(s) === -1) return s;
-    }
-  }
-
-  // A delayed re-dress of the left book; settled at once if the next click
-  // arrives first, so fast clicking can never leave stale covers behind.
-  var pending = null;
-  function settlePending() {
-    if (!pending) return;
-    clearTimeout(pending.timer);
-    setBook(pending.img, pending.slug);
-    pending.img.classList.remove('is-dim');
-    pending = null;
-  }
-
-  // Warm the cache so a cover never pops in half-loaded mid-animation
-  slugs.forEach(function (s) { new Image().src = coverSrc(s); });
 
   chips.forEach(function (chip) {
     chip.addEventListener('click', function () {
       var slug = chip.dataset.slug;
-      settlePending();
-      var front = slot('front'), right = slot('right'), left = slot('left'), spare = slot('out-right');
-      if (front.dataset.slug === slug) return;
-
+      var covers = Array.prototype.slice.call(stack.querySelectorAll('.pbx__cover'));
       chips.forEach(function (c) {
         c.classList.toggle('is-active', c === chip);
         c.setAttribute('aria-checked', c === chip ? 'true' : 'false');
       });
       replay(chip, 'is-pop');
-
-      var leaving = front.dataset.slug;
-      // Everything turns one step to the right
-      setSlot(right, 'out-right');
-      setSlot(front, 'right');
-
-      if (left.dataset.slug === slug) {
-        // The chosen book is already waiting on the left: it steps in,
-        // and a fresh one fades into the left slot behind it.
-        setSlot(left, 'front');
-        park(spare, 'out-left', nextAfter(slug, [slug, leaving]));
-        setSlot(spare, 'left');
-      } else {
-        // Any other niche sweeps in from off-stage left to the middle,
-        // and the waiting left book re-dresses as the next in the loop.
-        park(spare, 'out-left', slug);
-        setSlot(spare, 'front');
-        var upNext = nextAfter(slug, [slug, leaving]);
-        if (left.dataset.slug !== upNext) {
-          left.classList.add('is-dim');
-          pending = { img: left, slug: upNext, timer: setTimeout(settlePending, 320) };
-        }
-      }
-
+      covers.forEach(function (img) {
+        var isFront = img.dataset.slug === slug;
+        img.classList.toggle('pbx__cover--front', isFront);
+        img.classList.toggle('pbx__cover--right', !isFront);
+      });
       dl.href = 'assets/playbooks/motionholic-' + slug + '-playbook.pdf';
       label.textContent = 'Download The ' + chip.dataset.name + ' Playbook';
       meta.textContent = 'Free PDF \u00b7 ' + chip.dataset.pages + ' pages';
