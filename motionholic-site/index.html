@@ -118,7 +118,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,300;8..60,400;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/style.css?v=21" />
+  <link rel="stylesheet" href="css/style.css?v=22" />
   <!-- Microsoft Clarity -->
   <script type="text/javascript">
     (function(c,l,a,r,i,t,y){
@@ -608,7 +608,7 @@
         <div class="pbx__body">
           <span class="pbx__eyebrow">Free download &middot; 2 niches</span>
           <h2>Get The Content Playbook For Your Niche</h2>
-          <p class="pbx__sub">What&rsquo;s holding your industry back, and exactly what to publish to fix it. Pick your niche. No email, no sign-up.</p>
+          <p class="pbx__sub">What&rsquo;s holding your industry back, and exactly what to publish to fix it. Pick your niche, enter your email, and it downloads instantly.</p>
           <div class="pbx__chips" role="radiogroup" aria-label="Choose your niche">
           <button type="button" class="pbx__chip is-active" role="radio" aria-checked="true" data-slug="business-coach" data-name="Business Coach" data-pages="40">Business Coach</button>
           <button type="button" class="pbx__chip" role="radio" aria-checked="false" data-slug="course-creator" data-name="Course Creator" data-pages="22">Course Creator</button>
@@ -677,7 +677,18 @@
           Every week your content goes out without doing a job is a week those clients book someone
           else. Tell us what you sell and we&rsquo;ll tell you straight whether we can help.
         </p>
-        <a href="https://calendly.com/ayonpalovi10/video-editing-service" target="_blank" rel="noopener" class="btn btn--gold btn--lg reveal">Book a Free Strategy Call</a>
+        <form class="cform lead-form reveal" id="contactForm" novalidate>
+          <div class="cform__row">
+            <label class="lead-field"><span>Your name</span><input type="text" name="name" autocomplete="name" placeholder="Jane Smith" required /></label>
+            <label class="lead-field"><span>Email</span><input type="email" name="email" autocomplete="email" placeholder="you@example.com" required /></label>
+          </div>
+          <label class="lead-field"><span>What do you sell?</span><input type="text" name="business" placeholder="e.g. Business coaching, online course" /></label>
+          <label class="lead-field"><span>What do you need help with?</span><textarea name="message" rows="4" placeholder="Tell us about your content and what you want it to do for you." required></textarea></label>
+          <input type="text" name="website" class="lead-hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
+          <button type="submit" class="btn btn--gold btn--lg lead-form__btn">Send message</button>
+          <p class="lead-form__status" role="status" aria-live="polite"></p>
+          <p class="lead-form__fine">Prefer to talk? <a href="https://calendly.com/ayonpalovi10/video-editing-service" target="_blank" rel="noopener">Book a free call instead</a>.</p>
+        </form>
       </div>
     </div>
   </section>
@@ -724,6 +735,9 @@
   </footer>
 
   <script src="js/main.js?v=17"></script>
+  <script src="js/leads.js?v=1"></script>
+  <!-- EXIT-INTENT POPUP: delete this line and js/exit-popup.js to remove -->
+  <script src="js/exit-popup.js?v=1"></script>
 
   <!-- Structured data: helps Google and AI assistants describe the business -->
   <script type="application/ld+json">

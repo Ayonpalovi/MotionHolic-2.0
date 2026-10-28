@@ -1387,3 +1387,67 @@ h2 { font-size: clamp(34px, 4.6vw, 52px); }
 .price-card__price span { font-size: 15px; color: var(--muted-2); }
 .price-card__promo { margin: -14px 0 22px; font-size: 13px; color: var(--muted-2); }
 .pricing__note { margin-top: 32px; text-align: center; font-size: 15px; color: var(--muted-2); }
+
+/* ================= Lead capture: playbook gate + contact form ================= */
+.lead-hp { position: absolute !important; left: -9999px !important; opacity: 0 !important; height: 0; width: 0; }
+.lead-field { display: block; text-align: left; }
+.lead-field span { display: block; margin-bottom: 6px; font-size: 13px; font-weight: 500; color: var(--muted-2); }
+.lead-field input,
+.lead-field textarea {
+  width: 100%;
+  font-family: var(--sans);
+  font-size: 15px;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 10px;
+  padding: 13px 14px;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+.lead-field textarea { resize: vertical; min-height: 110px; }
+.lead-field input::placeholder,
+.lead-field textarea::placeholder { color: rgba(255, 255, 255, 0.35); }
+.lead-field input:focus,
+.lead-field textarea:focus { outline: none; border-color: #ffb433; box-shadow: 0 0 0 3px rgba(255, 180, 51, 0.18); }
+.lead-form { display: grid; gap: 14px; }
+.lead-form__btn { border: 0; cursor: pointer; text-align: center; width: 100%; }
+.lead-form__btn:disabled { opacity: 0.6; cursor: wait; }
+.lead-form__status { min-height: 20px; font-size: 14px; }
+.lead-form__status.is-ok { color: var(--green); }
+.lead-form__status.is-error { color: #ff8a8a; }
+.lead-form__status a, .lead-form__fine a { color: #ffb433; }
+.lead-form__fine { font-size: 12px; color: var(--muted-2); }
+
+.cform { margin: 6px auto 0; max-width: 560px; text-align: left; }
+.cform__row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.cform .lead-form__status, .cform .lead-form__fine { text-align: center; }
+@media (max-width: 600px) { .cform__row { grid-template-columns: 1fr; } }
+
+.lead-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(4px);
+}
+.lead-modal[hidden] { display: none; }
+.lead-modal__box {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  padding: 38px 34px 28px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 180, 51, 0.3);
+  background: radial-gradient(circle at 15% 0%, rgba(255, 180, 51, 0.16), transparent 55%), #0a0a0a;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7);
+}
+.lead-modal__close { position: absolute; top: 10px; right: 14px; background: none; border: 0; color: #bbb; font-size: 28px; line-height: 1; cursor: pointer; }
+.lead-modal__close:hover { color: #fff; }
+.lead-modal__eyebrow { font-size: 12px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #ffb433; }
+.lead-modal h3 { margin-top: 8px; font-family: var(--serif); font-weight: 300; font-size: 28px; color: #fff; }
+.lead-modal__sub { margin: 10px 0 20px; font-size: 15px; color: var(--muted-2); }
+body.lead-modal-open { overflow: hidden; }
