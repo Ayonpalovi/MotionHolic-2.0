@@ -14,7 +14,8 @@
 
   var PLAYBOOKS = {
     'business-coach': 'Business Coach',
-    'course-creator': 'Course Creator'
+    'course-creator': 'Course Creator',
+    'fitness-coach': 'Fitness Coach'
   };
 
   // ----- helpers -----

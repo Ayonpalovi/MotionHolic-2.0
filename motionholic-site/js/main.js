@@ -491,7 +491,7 @@ links.querySelectorAll('a').forEach((a) =>
   a.addEventListener('click', () => links.classList.remove('is-open'))
 );
 
-// ----- Free playbooks: two niches, the chosen book comes to the front -----
+// ----- Free playbooks: the chosen book comes to the front, the next ones fan out right then left -----
 (function () {
   var chips = Array.prototype.slice.call(document.querySelectorAll('.pbx__chip'));
   var stack = document.querySelector('.pbx__stack');
@@ -511,10 +511,12 @@ links.querySelectorAll('a').forEach((a) =>
         c.setAttribute('aria-checked', c === chip ? 'true' : 'false');
       });
       replay(chip, 'is-pop');
+      var order = chips.map(function (c) { return c.dataset.slug; });
+      var at = order.indexOf(slug);
+      var slots = ['front', 'right', 'left'];
       covers.forEach(function (img) {
-        var isFront = img.dataset.slug === slug;
-        img.classList.toggle('pbx__cover--front', isFront);
-        img.classList.toggle('pbx__cover--right', !isFront);
+        var pos = (order.indexOf(img.dataset.slug) - at + order.length) % order.length;
+        slots.forEach(function (s, i) { img.classList.toggle('pbx__cover--' + s, i === pos); });
       });
       dl.href = 'assets/playbooks/motionholic-' + slug + '-playbook.pdf';
       label.textContent = 'Download The ' + chip.dataset.name + ' Playbook';

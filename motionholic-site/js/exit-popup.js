@@ -62,6 +62,7 @@
     '<select name="slug" aria-label="Your niche">' +
     '<option value="business-coach">Business Coach playbook</option>' +
     '<option value="course-creator">Course Creator playbook</option>' +
+    '<option value="fitness-coach">Fitness Coach playbook</option>' +
     '</select>' +
     '<input type="email" name="email" placeholder="you@example.com" autocomplete="email" aria-label="Email" required />' +
     '<input type="text" name="website" class="xd__hp" tabindex="-1" autocomplete="off" aria-hidden="true" />' +
