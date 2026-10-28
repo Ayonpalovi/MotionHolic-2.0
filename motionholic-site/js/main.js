@@ -2,16 +2,13 @@
 
 // ----- Pricing: change prices here, they update everywhere on the page -----
 const PRICES = {
-  starter: { amount: 599, promo: 419 }, // one-time; promo = first 3 clients
-  monthly: { amount: 1799 },            // per month
-  launch:  { amount: 3799 },            // per month
+  starter: { amount: 499 }, // one-time
+  monthly: { amount: 695 }, // per month
+  launch:  { amount: 995 }, // per month
 };
 const fmtPrice = (n) => '$' + n.toLocaleString('en-US');
 Object.entries(PRICES).forEach(([key, p]) => {
   document.querySelectorAll(`[data-price="${key}"]`).forEach((el) => (el.textContent = fmtPrice(p.amount)));
-  if (p.promo != null) {
-    document.querySelectorAll(`[data-price-promo="${key}"]`).forEach((el) => (el.textContent = fmtPrice(p.promo)));
-  }
 });
 
 // ----- Scroll reveal (staggered fade-up) -----
