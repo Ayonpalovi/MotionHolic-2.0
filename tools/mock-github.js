@@ -14,6 +14,8 @@ const put = (buf) => { const s = gitHash(buf); blobs.set(s, buf); return s; };
 function seed() {
   const files = {
     'motionholic-site/content/content.json': put(fs.readFileSync(path.join(ROOT, 'motionholic-site/content/content.json'))),
+    'motionholic-site/assets/playbooks/motionholic-ugc-creator-playbook.pdf': put(Buffer.from('%PDF-1.4 ugc')),
+    'motionholic-site/assets/playbooks/ugc-creator-cover.jpg': put(Buffer.from([0xff, 0xd8, 0xff, 0xe0, 1, 2, 3])),
     'motionholic-site/index.html': put(execSync('git show HEAD:motionholic-site/index.html', { cwd: ROOT, maxBuffer: 1 << 26 })),
   };
   trees.set('t0', files);
@@ -31,7 +33,13 @@ function ghHandler(req, res, body) {
     const ref = u.searchParams.get('ref');
     const c = commits.get(ref === 'main' ? head : ref);
     if (!c) return json(404, { message: 'No commit found for the ref' });
-    const file = trees.get(c.tree)[decodeURIComponent(m[1])];
+    const want = decodeURIComponent(m[1]);
+    const tree = trees.get(c.tree);
+    if (!tree[want]) {
+      const names = [...new Set(Object.keys(tree).filter((k) => k.startsWith(want + '/')).map((k) => k.slice(want.length + 1).split('/')[0]))];
+      if (names.length) return json(200, names.map((name) => ({ name, type: 'file' })));
+    }
+    const file = tree[want];
     if (!file) return json(404, { message: 'Not Found' });
     return json(200, { sha: file, content: blobs.get(file).toString('base64'), encoding: 'base64' });
   }

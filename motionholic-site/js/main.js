@@ -515,7 +515,7 @@ links.querySelectorAll('a').forEach((a) =>
         var pos = (order.indexOf(img.dataset.slug) - at + order.length) % order.length;
         slots.forEach(function (s, i) { img.classList.toggle('pbx__cover--' + s, i === pos); });
       });
-      dl.href = 'assets/playbooks/motionholic-' + slug + '-playbook.pdf';
+      dl.href = 'assets/playbooks/motionholic-' + slug + '-playbook.pdf' + (chip.dataset.v ? '?v=' + chip.dataset.v : '');
       label.textContent = 'Download The ' + chip.dataset.name + ' Playbook';
       meta.textContent = 'Free PDF \u00b7 ' + chip.dataset.pages + ' pages';
       replay(label, 'pbx__swap-in');

@@ -1177,6 +1177,13 @@ h2 { font-size: clamp(34px, 4.6vw, 52px); }
   opacity: 0;
   filter: brightness(0.5) blur(1.5px);
 }
+/* Playbooks beyond the three visible slots wait off-stage (hidden) until chosen */
+.pbx__cover:not(.pbx__cover--front):not(.pbx__cover--right):not(.pbx__cover--left) {
+  z-index: 0;
+  transform: translate(55%, -50%) rotate(18deg) scale(0.82);
+  opacity: 0;
+  pointer-events: none;
+}
 /* Instant reposition used to park a book off-stage without it being seen moving */
 .pbx__cover.is-prep { transition: none; }
 .pbx__cover.is-dim { opacity: 0; }

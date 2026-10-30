@@ -32,7 +32,7 @@ function start() {
     // images published through the pretend GitHub are served from its memory
     const tree = state.trees.get(state.commits.get(state.head).tree);
     const mem = tree['motionholic-site' + p];
-    if (mem && p.startsWith('/assets/uploads/')) { res.writeHead(200, { 'Content-Type': MIME[path.extname(p)] || 'application/octet-stream' }); return res.end(state.blobs.get(mem)); }
+    if (mem && (p.startsWith('/assets/uploads/') || p.startsWith('/assets/playbooks/'))) { res.writeHead(200, { 'Content-Type': MIME[path.extname(p)] || 'application/octet-stream' }); return res.end(state.blobs.get(mem)); }
     if (p === '/' + 'index.html' && mem) { res.writeHead(200, { 'Content-Type': MIME['.html'] }); return res.end(state.blobs.get(mem)); }
     const file = path.normalize(path.join(SITE, p));
     if (!file.startsWith(SITE + path.sep) || p.startsWith('/api/')) { res.writeHead(404); return res.end('Not found'); }

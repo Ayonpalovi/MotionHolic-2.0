@@ -47,6 +47,13 @@
   style.textContent = css;
   document.head.appendChild(style);
 
+  function playbookOptions() {
+    var names = (window.MHLeads && window.MHLeads.playbooks) || {};
+    return Object.keys(names).map(function (slug) {
+      return '<option value="' + slug + '">' + String(names[slug]).replace(/[&<>"]/g, function (ch) { return '&#' + ch.charCodeAt(0) + ';'; }) + ' playbook</option>';
+    }).join('');
+  }
+
   var el = document.createElement('div');
   el.className = 'xd';
   el.setAttribute('role', 'dialog');
@@ -60,9 +67,7 @@
     '<p>Pick your niche and we&rsquo;ll send you the exact content plan. Free, no strings.</p>' +
     '<form novalidate>' +
     '<select name="slug" aria-label="Your niche">' +
-    '<option value="business-coach">Business Coach playbook</option>' +
-    '<option value="course-creator">Course Creator playbook</option>' +
-    '<option value="fitness-coach">Fitness Coach playbook</option>' +
+    playbookOptions() +
     '</select>' +
     '<input type="email" name="email" placeholder="you@example.com" autocomplete="email" aria-label="Email" required />' +
     '<input type="text" name="website" class="xd__hp" tabindex="-1" autocomplete="off" aria-hidden="true" />' +

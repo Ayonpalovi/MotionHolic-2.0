@@ -133,11 +133,20 @@
       ] },
 
     { id: 'playbooks', anchor: 'playbooks', title: 'Free playbooks',
-      lede: 'The free download box. You can change the words here. The PDF files and the niche buttons stay as they are for now.',
+      lede: 'The free download box. Add a playbook to give visitors another niche to pick from. Each one needs a name, a page count, a cover image and the PDF.',
       fields: [
-        { key: 'eyebrow', label: 'Small label above the heading', type: 'text' },
+        { key: 'eyebrow', label: 'Small label above the heading', type: 'text', hint: 'Type {n} where the number of playbooks should go. It updates by itself as you add or remove playbooks.' },
         { key: 'heading', label: 'Heading', type: 'text' },
         { key: 'sub', label: 'Text under the heading', type: 'textarea', rows: 3 },
+        { key: 'items', label: 'Playbooks', type: 'list', addLabel: 'Add a playbook', itemName: 'playbook', min: 1, max: 10,
+          itemTitle: (p) => p.name || 'New playbook', itemSub: (p) => (p.pages ? `${p.pages} pages` : ''),
+          blank: () => ({ name: '', slug: '', pages: '', rev: '' }),
+          fields: [
+            { key: 'name', label: 'Name of the niche', type: 'text', hint: 'For example “Photographer”. It becomes the button text and the download button text. Type it before adding files.' },
+            { key: 'pages', label: 'Number of pages in the PDF', type: 'text', hint: 'Just the number, like 28.' },
+            { key: 'cover', type: 'pbfile', kind: 'cover', label: 'Cover image' },
+            { key: 'pdf', type: 'pbfile', kind: 'pdf', label: 'The PDF people download' },
+          ] },
       ] },
 
     { id: 'faq', anchor: 'faq', title: 'Questions & answers',
@@ -297,6 +306,92 @@
     scrollFrame(previewAnchor);
   });
 
+  /* ---------- Playbook files ---------- */
+  const slugify = (n) => String(n || '').toLowerCase().replace(/&/g, ' and ').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 40).replace(/-+$/, '');
+  const pdfPath = (slug) => `assets/playbooks/motionholic-${slug}-playbook.pdf`;
+  const coverPath = (slug) => `assets/playbooks/${slug}-cover.jpg`;
+  // The file name is fixed the first time it is needed, so renaming later never breaks a link.
+  function ensureSlug(item) {
+    if (item.slug) return item.slug;
+    const taken = new Set(content.playbooks.items.map((p) => p.slug).filter(Boolean));
+    const base = slugify(item.name) || 'playbook';
+    let s = base, i = 2;
+    while (taken.has(s)) s = `${base}-${i++}`.slice(0, 40);
+    item.slug = s;
+    return s;
+  }
+  const onSite = {}; // path -> true/false, checked once per path
+  const shown = {};  // path -> picture of a cover published in this session (the site needs ~30s to show it)
+  async function existsOnSite(path) {
+    if (path in onSite) return onSite[path];
+    try { onSite[path] = (await fetch('/' + path, { method: 'HEAD', cache: 'no-store' })).ok; } catch { onSite[path] = false; }
+    return onSite[path];
+  }
+  const mb = (bytes) => (bytes / 1048576).toFixed(1) + ' MB';
+
+  async function preparePdf(file, path) {
+    if (file.type !== 'application/pdf' && !/\.pdf$/i.test(file.name)) throw new Error('Please choose a PDF file');
+    if (file.size > 2.4 * 1024 * 1024) throw new Error(`That PDF is ${mb(file.size)}. The limit is 2.4 MB. Compress it (for example with Adobe Acrobat “Reduce File Size”) and try again.`);
+    const base64 = await new Promise((ok, no) => { const r = new FileReader(); r.onload = () => ok(String(r.result).split(',')[1]); r.onerror = no; r.readAsDataURL(file); });
+    return { path, base64, dataUrl: null, label: `${file.name} (${mb(file.size)})` };
+  }
+
+  function buildPlaybookFile(f, item) {
+    const isCover = f.kind === 'cover';
+    const status = el('div', { class: 'hint' });
+    const thumb = el('img', { alt: '', style: 'width:64px;height:90px;object-fit:cover;border-radius:6px;background:var(--panel-2);display:none;flex:none' });
+    const input = el('input', { type: 'file', accept: isCover ? 'image/png,image/jpeg,image/webp' : 'application/pdf', hidden: true });
+    const btn = el('button', { class: 'btn btn--sm', type: 'button', onclick: () => {
+      if (!item.name.trim()) return toast('Type the playbook’s name first, then add its files.', true);
+      input.click();
+    } }, isCover ? 'Choose cover image…' : 'Choose PDF…');
+    // before the file name is fixed, work out what it WOULD be so existing files are recognised
+    const pathNow = () => { const s = item.slug || slugify(item.name); return s ? (isCover ? coverPath(s) : pdfPath(s)) : ''; };
+    async function refresh() {
+      const p = pathNow();
+      if (p && pending[p]) {
+        status.textContent = `New file ready: ${pending[p].label || 'cover image'}. It goes live when you publish.`;
+        status.style.color = 'var(--gold-2)';
+        if (isCover) { thumb.src = pending[p].dataUrl; thumb.style.display = 'block'; }
+        return;
+      }
+      if (p && await existsOnSite(p)) {
+        status.textContent = 'On your site now. Choose a file to replace it.';
+        status.style.color = 'var(--green)';
+        if (isCover) { thumb.src = shown[p] || '/' + p + '?t=' + (item.rev || ''); thumb.style.display = 'block'; }
+        return;
+      }
+      status.textContent = isCover ? 'No cover yet. Needed before this playbook can be published.' : 'No PDF yet. Needed before this playbook can be published.';
+      status.style.color = 'var(--red)';
+      thumb.style.display = 'none';
+    }
+    input.addEventListener('change', async () => {
+      const file = input.files[0];
+      if (!file) return;
+      btn.disabled = true; btn.textContent = 'Preparing…';
+      try {
+        const slug = ensureSlug(item);
+        const path = isCover ? coverPath(slug) : pdfPath(slug);
+        let up;
+        if (isCover) {
+          up = await prepareImage(file, { maxSide: 800, forceJpeg: true });
+          up = { ...up, path };
+        } else up = await preparePdf(file, path);
+        pending[path] = up;
+        if (await existsOnSite(path)) item.rev = Date.now().toString(36); // replacing a file: new link so nobody sees the old copy
+        markDirty(); document.dispatchEvent(new Event('pb-refresh'));
+      } catch (e) { toast(e.message, true); }
+      btn.disabled = false; btn.textContent = isCover ? 'Choose cover image…' : 'Choose PDF…'; input.value = '';
+    });
+    refresh();
+    // keep the status right when the name is typed or the other file is chosen
+    const again = () => { if (!status.isConnected) { document.removeEventListener('change', again); document.removeEventListener('pb-refresh', again); return; } refresh(); };
+    document.addEventListener('change', again); document.addEventListener('pb-refresh', again);
+    return el('div', { class: 'field' }, el('span', { class: 'label' }, f.label),
+      el('div', { class: 'img', style: 'align-items:center' }, isCover ? thumb : null, el('div', { class: 'img__body' }, status, el('div', {}, btn), input)),
+      isCover ? el('span', { class: 'hint' }, 'Portrait, like a book cover (about 595 × 842). JPG or PNG; it is resized for you.') : el('span', { class: 'hint' }, 'PDF up to 2.4 MB.'));
+  }
+
   /* ---------- Field builders ---------- */
   function fieldWrap(f, input, extra) {
     const id = 'f' + Math.random().toString(36).slice(2, 9);
@@ -313,6 +408,7 @@
     if (f.type === 'heading') return el('div', {}, el('h3', { class: 'subhead' }, f.label), f.hint ? el('p', { class: 'hint' }, f.hint) : null);
     if (f.type === 'list') return buildList(f, obj);
     if (f.type === 'image') return buildImage(f, obj);
+    if (f.type === 'pbfile') return buildPlaybookFile(f, obj);
 
     const isArea = f.type === 'textarea' || f.type === 'lines';
     const input = isArea ? el('textarea', { rows: f.rows || 3 }) : el('input', { type: f.type === 'url' ? 'url' : 'text' });
@@ -469,14 +565,14 @@
 
   /* ---------- Images ---------- */
   // Shrinks big phone/camera photos before they go on the site, so pages stay fast.
-  async function prepareImage(file) {
+  async function prepareImage(file, opts = {}) {
     if (!/^image\/(png|jpeg|webp|gif)$/.test(file.type)) throw new Error('Please choose a JPG, PNG, WebP or GIF image');
     const bmp = await createImageBitmap(file).catch(() => { throw new Error('That image could not be opened'); });
-    const scale = Math.min(1, 1600 / Math.max(bmp.width, bmp.height));
+    const scale = Math.min(1, (opts.maxSide || 1600) / Math.max(bmp.width, bmp.height));
     const w = Math.round(bmp.width * scale), h = Math.round(bmp.height * scale);
     const canvas = document.createElement('canvas'); canvas.width = w; canvas.height = h;
     const ctx = canvas.getContext('2d');
-    const keepPng = file.type === 'image/png' && file.size < 300 * 1024;
+    const keepPng = !opts.forceJpeg && file.type === 'image/png' && file.size < 300 * 1024;
     if (!keepPng) { ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, w, h); }
     ctx.drawImage(bmp, 0, 0, w, h);
     const type = keepPng ? 'image/png' : 'image/jpeg';
@@ -487,18 +583,37 @@
     return { path: `assets/uploads/${Date.now().toString(36)}-${slug}.${keepPng ? 'png' : 'jpg'}`, base64, dataUrl };
   }
 
+  // Every playbook needs a name, a page count, and both files (new now, or already on the site).
+  async function playbookProblem() {
+    for (const p of content.playbooks.items) {
+      if (!p.name.trim()) return 'One of your playbooks has no name yet. Fill it in or delete it.';
+      if (!(Number(p.pages) >= 1)) return `Enter the number of pages for “${p.name}”.`;
+      const paths = [['PDF', pdfPath(p.slug)], ['cover image', coverPath(p.slug)]];
+      for (const [what, path] of paths) {
+        if (!pending[path] && !(await existsOnSite(path))) return `“${p.name}” still needs its ${what}.`;
+      }
+    }
+    return null;
+  }
+
   /* ---------- Publish, history ---------- */
   async function save() {
     if (saving || !dirty) return;
     if (!confirm('Publish these changes to motionholic.com?\n\nThey will be live within about 30 seconds. You can undo any change later from “Past versions”.')) return;
+    for (const p of content.playbooks.items) if (p.name.trim()) ensureSlug(p);
+    const problem = await playbookProblem();
+    if (problem) { toast(problem, true); return; }
     const json = JSON.stringify(content);
+    const wanted = new Set(content.playbooks.items.flatMap((p) => [pdfPath(p.slug), coverPath(p.slug)]));
     const uploads = {};
-    Object.keys(pending).forEach((p) => { if (json.includes(p)) uploads[p] = pending[p].base64; });
+    Object.keys(pending).forEach((p) => { if (json.includes(p) || wanted.has(p)) uploads[p] = pending[p].base64; });
+    const size = Object.values(uploads).reduce((n, b) => n + b.length, 0);
+    if (size > 3.9 * 1024 * 1024) { toast('The new files are too big to publish together. Publish the playbook files on their own first, then your other changes.', true); return; }
     saving = true; $('#btnSave').disabled = true; setStatus('dirty', 'Publishing…');
     try {
       const out = await api('save', { method: 'PUT', body: JSON.stringify({ content, baseSha, uploads }) });
       content = out.content; baseSha = out.sha; dirty = false;
-      Object.keys(uploads).forEach((p) => delete pending[p]);
+      Object.keys(uploads).forEach((p) => { if (pending[p] && pending[p].dataUrl) shown[p] = pending[p].dataUrl; onSite[p] = true; delete pending[p]; });
       setStatus('', 'Published');
       toast('Published! It will be visible on motionholic.com in about 30 seconds.');
       renderEditor();

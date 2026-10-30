@@ -159,6 +159,42 @@ ${t.photo ? `              <img src="${esc(t.photo)}" alt="${esc(t.name)}, ${esc
   </section>`;
   },
 
+  playbooks: (c) => {
+    const items = c.playbooks.items;
+    const n = items.length;
+    const eyebrow = String(c.playbooks.eyebrow || '').replace(/\{n\}/g, String(n)).replace(/\b1 niches\b/, '1 niche');
+    const v = (it) => (it.rev ? `?v=${esc(it.rev)}` : '');
+    const pdf = (it) => `assets/playbooks/motionholic-${esc(it.slug)}-playbook.pdf${v(it)}`;
+    const slots = ['front', 'right', 'left'];
+    const first = items[0];
+    return `  <section class="pbx section" id="playbooks">
+    <div class="container">
+      <div class="pbx__panel reveal">
+        <div class="pbx__stack" aria-hidden="true">
+${items.map((it, i) => `          <img class="pbx__cover${slots[i] ? ' pbx__cover--' + slots[i] : ''}" data-slug="${esc(it.slug)}" src="assets/playbooks/${esc(it.slug)}-cover.jpg${v(it)}" alt="" loading="lazy" />`).join('\n')}
+        </div>
+        <div class="pbx__body">
+          <span class="pbx__eyebrow">${esc(eyebrow)}</span>
+          <h2>${esc(c.playbooks.heading)}</h2>
+          <p class="pbx__sub">${esc(c.playbooks.sub)}</p>
+          <div class="pbx__chips" role="radiogroup" aria-label="Choose your niche">
+${items.map((it, i) => `          <button type="button" class="pbx__chip${i === 0 ? ' is-active' : ''}" role="radio" aria-checked="${i === 0}" data-slug="${esc(it.slug)}" data-name="${esc(it.name)}" data-pages="${esc(it.pages)}" data-v="${esc(it.rev || '')}">${esc(it.name)}</button>`).join('\n')}
+          <a class="pbx__ask" href="${DEFAULT_CALENDLY}" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
+            Not listed? Book a call
+          </a>
+          </div>
+          <div class="pbx__actions">
+            <a class="btn" id="pbxDownload" href="${pdf(first)}" download><span id="pbxLabel">Download The ${esc(first.name)} Playbook</span></a>
+            <span class="pbx__meta"><span id="pbxMeta">Free PDF &middot; ${esc(first.pages)} pages</span></span>
+          </div>
+          <a class="pbx__ask-line" href="${DEFAULT_CALENDLY}" target="_blank" rel="noopener">Don&rsquo;t see your niche? <span>Book a free call &rarr;</span></a>
+        </div>
+      </div>
+    </div>
+  </section>`;
+  },
+
   faq: (c) => `  <section class="faq section" id="faq">
     <div class="container container--narrow">
       <h2 class="reveal">${esc(c.faq.heading)}</h2>

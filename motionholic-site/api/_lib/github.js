@@ -59,9 +59,17 @@ async function commitFiles(files, message) {
   return { commit: commit.sha, shaOf: (file) => entries.find((e) => e._file === file).sha };
 }
 
+// Names of the files in a folder (one small request). Missing folder -> empty list.
+async function listDir(dir) {
+  try {
+    const j = await gh(`/repos/${REPO()}/contents/${at(dir).split('/').map(encodeURIComponent).join('/')}?ref=${encodeURIComponent(BRANCH())}`);
+    return Array.isArray(j) ? j.map((e) => e.name) : [];
+  } catch (e) { if (e.status === 404) return []; throw e; }
+}
+
 async function history(file, limit = 30) {
   const list = await gh(`/repos/${REPO()}/commits?sha=${encodeURIComponent(BRANCH())}&path=${encodeURIComponent(at(file))}&per_page=${limit}`);
   return list.map((c) => ({ sha: c.sha, time: c.commit.committer.date, message: c.commit.message.split('\n')[0] }));
 }
 
-module.exports = { readFile, commitFiles, history };
+module.exports = { readFile, commitFiles, history, listDir };

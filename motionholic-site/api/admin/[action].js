@@ -1,6 +1,6 @@
 // The admin panel's API. One file, one route per action: /api/admin/<action>
 const { render } = require('../_lib/render');
-const { validate, normalise, validateUploads } = require('../_lib/content');
+const { validate, normalise, validateUploads, missingPlaybookFiles } = require('../_lib/content');
 const auth = require('../_lib/auth');
 const github = require('../_lib/github');
 
@@ -81,12 +81,21 @@ module.exports = async (req, res) => {
 
     if (action === 'save' && method === 'PUT') {
       const { content, baseSha, uploads } = await readBody(req);
-      const err = validate(content) || validateUploads(uploads);
+      const err = validate(content) || validateUploads(uploads, content);
       if (err) return send(res, 400, { error: err });
       normalise(content);
       const current = await github.readFile('content/content.json');
       if (baseSha && current.sha !== baseSha) {
         return send(res, 409, { error: 'The website was changed somewhere else since you opened it. Reload this page to see the latest version, then make your change again.' });
+      }
+      // a playbook that is new in this save must come with its PDF and cover
+      let before = new Set();
+      try { before = new Set((JSON.parse(current.text).playbooks.items || []).map((p) => p.slug)); } catch { /* older content: treat all as new */ }
+      const added = content.playbooks.items.filter((p) => !before.has(p.slug));
+      if (added.length) {
+        const existing = new Set((await github.listDir('assets/playbooks')).map((n) => `assets/playbooks/${n}`));
+        const missing = missingPlaybookFiles(content, uploads, existing, before);
+        if (missing) return send(res, 400, { error: missing });
       }
       const out = await github.commitFiles(siteFiles(content, uploads), 'Admin: update website content');
       return send(res, 200, { ok: true, sha: out.shaOf('content/content.json'), content });
@@ -101,6 +110,10 @@ module.exports = async (req, res) => {
       if (!/^[0-9a-f]{40}$/.test(String(sha))) return send(res, 400, { error: 'Bad version' });
       const old = await github.readFile('content/content.json', sha);
       const content = JSON.parse(old.text);
+      if (!content.playbooks || !Array.isArray(content.playbooks.items)) { // versions from before playbooks were editable
+        const now = JSON.parse((await github.readFile('content/content.json')).text);
+        content.playbooks = { ...(content.playbooks || {}), eyebrow: now.playbooks.eyebrow, items: now.playbooks.items };
+      }
       const err = validate(content);
       if (err) return send(res, 400, { error: err });
       normalise(content);

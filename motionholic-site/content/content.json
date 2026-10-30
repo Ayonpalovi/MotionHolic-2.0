@@ -258,9 +258,29 @@
     "disclaimer": "Individual results vary based on niche, consistency, market conditions and how each strategy is implemented. We do not claim these results are achievable for everyone."
   },
   "playbooks": {
-    "eyebrow": "Free download · 3 niches",
+    "eyebrow": "Free download · {n} niches",
     "heading": "Get The Content Playbook For Your Niche",
-    "sub": "What’s holding your industry back, and exactly what to publish to fix it. Pick your niche, enter your email, and it downloads instantly."
+    "sub": "What’s holding your industry back, and exactly what to publish to fix it. Pick your niche, enter your email, and it downloads instantly.",
+    "items": [
+      {
+        "name": "Business Coach",
+        "slug": "business-coach",
+        "pages": 40,
+        "rev": ""
+      },
+      {
+        "name": "Course Creator",
+        "slug": "course-creator",
+        "pages": 22,
+        "rev": ""
+      },
+      {
+        "name": "Fitness Coach",
+        "slug": "fitness-coach",
+        "pages": 34,
+        "rev": ""
+      }
+    ]
   },
   "faq": {
     "heading": "Got Questions?",

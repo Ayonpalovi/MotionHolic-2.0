@@ -130,6 +130,69 @@ function listen(handler) {
     const r = await call('save', { method: 'PUT', body: { content: c, baseSha: sha } }); eq(r.status, 200); sha = r.data.sha; content = r.data.content;
     ok(file('index.html').toString().includes('Hello {{seo.title}} {{@jsonld}}'));
   });
+  const pdf = Buffer.from('%PDF-1.4 test playbook ' + 'x'.repeat(300)).toString('base64');
+  const jpg = Buffer.concat([Buffer.from([0xff, 0xd8, 0xff, 0xe0]), crypto.randomBytes(100)]).toString('base64');
+  const withPlaybook = (extra) => { const c = JSON.parse(JSON.stringify(content)); c.playbooks.items.push({ name: 'Photographer', slug: 'photographer', pages: 28, rev: '', ...extra }); return c; };
+  await t('playbooks: the three existing ones render as chips + covers', async () => {
+    const html = file('index.html').toString();
+    eq((html.match(/<button type="button" class="pbx__chip/g) || []).length, 3); eq((html.match(/<img class="pbx__cover/g) || []).length, 3); ok(html.includes('Free download &middot;') || html.includes('Free download · 3 niches'), 'eyebrow shows 3');
+  });
+  await t('playbooks: a new one WITHOUT files is refused with a clear message', async () => {
+    const r = await call('save', { method: 'PUT', body: { content: withPlaybook(), baseSha: sha, uploads: {} } });
+    eq(r.status, 400); ok(/Photographer.*PDF and cover image/.test(r.data.error), r.data.error);
+  });
+  await t('playbooks: only a PDF (no cover) is still refused', async () => {
+    const r = await call('save', { method: 'PUT', body: { content: withPlaybook(), baseSha: sha, uploads: { 'assets/playbooks/motionholic-photographer-playbook.pdf': pdf } } });
+    eq(r.status, 400); ok(/cover image/.test(r.data.error) && !/PDF/.test(r.data.error), r.data.error);
+  });
+  await t('playbooks: fake PDF refused', async () => {
+    const r = await call('save', { method: 'PUT', body: { content: withPlaybook(), baseSha: sha, uploads: { 'assets/playbooks/motionholic-photographer-playbook.pdf': Buffer.from('not a pdf').toString('base64'), 'assets/playbooks/photographer-cover.jpg': jpg } } });
+    eq(r.status, 400); ok(/PDF/.test(r.data.error));
+  });
+  await t('playbooks: files for a playbook that is not in the list are refused', async () => {
+    const r = await call('save', { method: 'PUT', body: { content, baseSha: sha, uploads: { 'assets/playbooks/motionholic-ghost-playbook.pdf': pdf } } });
+    eq(r.status, 400);
+  });
+  await t('playbooks: bad file names / page counts / duplicates refused', async () => {
+    for (const bad of [{ slug: '../x' }, { slug: 'Has Caps' }, { pages: 0 }, { pages: 'abc' }, { name: '' }, { slug: 'business-coach' }]) {
+      const r = await call('save', { method: 'PUT', body: { content: withPlaybook(bad), baseSha: sha, uploads: {} } }); eq(r.status, 400, JSON.stringify(bad) + ' ' + JSON.stringify(r.data));
+    }
+  });
+  await t('playbooks: new one WITH pdf + cover goes live in ONE commit and the page shows it', async () => {
+    const before = commits.size;
+    const r = await call('save', { method: 'PUT', body: { content: withPlaybook(), baseSha: sha, uploads: { 'assets/playbooks/motionholic-photographer-playbook.pdf': pdf, 'assets/playbooks/photographer-cover.jpg': jpg } } });
+    eq(r.status, 200, JSON.stringify(r.data)); eq(commits.size, before + 1); sha = r.data.sha; content = r.data.content;
+    const html = file('index.html').toString();
+    ok(html.includes('data-slug="photographer" data-name="Photographer" data-pages="28"'), 'chip');
+    ok(html.includes('src="assets/playbooks/photographer-cover.jpg"'), 'cover');
+    ok(html.includes('Free download &middot; 4 niches') || html.includes('Free download · 4 niches'), 'eyebrow counts 4');
+    ok(file('assets/playbooks/motionholic-photographer-playbook.pdf').toString().startsWith('%PDF-'), 'pdf committed');
+    eq(file('assets/playbooks/photographer-cover.jpg').length > 50, true);
+    ok(!/class="pbx__cover pbx__cover--(front|right|left)" data-slug="photographer"/.test(html), 'fourth cover waits off-stage');
+  });
+  await t('playbooks: a playbook whose files are already on the site needs no upload', async () => {
+    const c = JSON.parse(JSON.stringify(content)); c.playbooks.items.push({ name: 'UGC Creator', slug: 'ugc-creator', pages: 30, rev: '' });
+    const r = await call('save', { method: 'PUT', body: { content: c, baseSha: sha, uploads: {} } });
+    eq(r.status, 200, JSON.stringify(r.data)); sha = r.data.sha; content = r.data.content;
+    ok(file('index.html').toString().includes('data-slug="ugc-creator"'));
+  });
+  await t('playbooks: replacing a file with a new version tag adds ?v= to the links', async () => {
+    const c = JSON.parse(JSON.stringify(content)); c.playbooks.items[0].rev = 'k3x9';
+    const r = await call('save', { method: 'PUT', body: { content: c, baseSha: sha, uploads: { 'assets/playbooks/motionholic-business-coach-playbook.pdf': pdf } } });
+    eq(r.status, 200, JSON.stringify(r.data)); sha = r.data.sha; content = r.data.content;
+    const html = file('index.html').toString();
+    ok(html.includes('motionholic-business-coach-playbook.pdf?v=k3x9') && html.includes('business-coach-cover.jpg?v=k3x9'), 'versioned links');
+  });
+  await t('playbooks: deleting one removes its chip, cover and eyebrow count follows', async () => {
+    const c = JSON.parse(JSON.stringify(content)); c.playbooks.items = c.playbooks.items.filter((p) => p.slug !== 'ugc-creator' && p.slug !== 'photographer');
+    const r = await call('save', { method: 'PUT', body: { content: c, baseSha: sha } }); eq(r.status, 200); sha = r.data.sha; content = r.data.content;
+    const html = file('index.html').toString();
+    ok(!html.includes('data-slug="photographer"') && !html.includes('data-slug="ugc-creator"')); ok(/Free download (&middot;|·) 3 niches/.test(html));
+  });
+  await t('playbooks: the last one cannot be deleted (needs at least 1)', async () => {
+    const c = JSON.parse(JSON.stringify(content)); c.playbooks.items = [];
+    eq((await call('save', { method: 'PUT', body: { content: c, baseSha: sha } })).status, 400);
+  });
   await t('history lists versions newest first', async () => {
     const r = await call('history'); eq(r.status, 200); ok(r.data.length >= 4, 'length ' + r.data.length); ok(/^Admin:/.test(r.data[0].message));
   });

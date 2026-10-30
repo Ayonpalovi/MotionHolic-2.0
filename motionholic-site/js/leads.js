@@ -12,11 +12,13 @@
   var KIT_URL = 'https://app.kit.com/forms/' + KIT_FORM_ID + '/subscriptions';
   var STORE_KEY = 'mh_lead';
 
-  var PLAYBOOKS = {
-    'business-coach': 'Business Coach',
-    'course-creator': 'Course Creator',
-    'fitness-coach': 'Fitness Coach'
-  };
+  // The playbook list comes from the page itself (the admin panel controls it).
+  var PLAYBOOKS = {};
+  var VERSIONS = {};
+  Array.prototype.forEach.call(document.querySelectorAll('.pbx__chip'), function (c) {
+    PLAYBOOKS[c.getAttribute('data-slug')] = c.getAttribute('data-name');
+    VERSIONS[c.getAttribute('data-slug')] = c.getAttribute('data-v') || '';
+  });
 
   // ----- helpers -----
   function track(name) {
@@ -52,7 +54,7 @@
 
   function downloadPlaybook(slug) {
     var a = document.createElement('a');
-    a.href = 'assets/playbooks/motionholic-' + slug + '-playbook.pdf';
+    a.href = 'assets/playbooks/motionholic-' + slug + '-playbook.pdf' + (VERSIONS[slug] ? '?v=' + VERSIONS[slug] : '');
     a.download = '';
     document.body.appendChild(a);
     a.click();
