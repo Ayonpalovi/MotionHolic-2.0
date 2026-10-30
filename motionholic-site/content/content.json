@@ -1,0 +1,307 @@
+{
+  "settings": {
+    "calendly": "https://calendly.com/ayonpalovi10/video-editing-service",
+    "email": "ayonpalovi10@gmail.com",
+    "instagram": "https://www.instagram.com/ovisperspective/",
+    "linkedin": "https://www.linkedin.com/in/ayonkumarpaulovi/"
+  },
+  "seo": {
+    "title": "Video Editing Agency for Creators, Coaches & Brands | Motionholic",
+    "description": "Video editing that turns viewers into paying clients. A video editing agency for coaches, creators and brands, covering YouTube, Shorts, Reels, TikTok and podcasts. 1,200+ videos since 2021. Book a free call.",
+    "ogDescription": "Video editing that turns viewers into paying clients. For coaches, creators and brands on YouTube, Shorts, Reels and podcasts. 1,200+ videos since 2021."
+  },
+  "hero": {
+    "line1": "Video that turns viewers",
+    "line2": "into paying clients.",
+    "sub": "Video editing for coaches, creators & brands who need booked calls, not just views  I  1,200+ videos since 2021",
+    "cta": "Book a Free Strategy Call"
+  },
+  "showreel": {
+    "heading": "See What We’d Do With Your Footage",
+    "sub": "Two minutes. How we edit, how we build a video that sells, and what it’s like to work with us.",
+    "video": "8GW8QOYTSk8"
+  },
+  "about": {
+    "heading": "Posting Isn’t The Problem",
+    "body": "You didn't start posting to become a video editor. You started because you needed more clients. So you film on Sunday, edit for three nights, publish, and wait. A few likes come in. No enquiries. Meanwhile the work that actually pays you sat untouched all week.\n\nThe issue usually isn't your message. It's that the edit never leads anyone anywhere. Nothing in the first seconds to stop the person who could afford you. No structure that builds enough trust to make them curious. No clear reason to book.\n\nThat's the part we fix. Since 2021 we've cut over 1,200 videos for coaches, creators and brands, and every one is built around a single question: will this make someone want to work with you? You get your evenings back, and your content starts doing a job.",
+    "image": "assets/founder.jpg",
+    "imageAlt": "Ayon Kumar Paul Ovi, founder of Motionholic, presenting on stage"
+  },
+  "services": {
+    "heading": "What We Edit",
+    "intro": "Whatever you publish, the goal is the same: reach the people who can actually hire you, and give them a reason to. You send the footage, we handle the rest.",
+    "items": [
+      {
+        "title": "Short Form Video Editing",
+        "text": "Shorts, Reels and TikToks cut to stop the right person, not just any person. Captions, sound design and pacing that hold them long enough to go looking for you."
+      },
+      {
+        "title": "YouTube Video Editing",
+        "text": "Long-form edits that build real trust. Tight intros, no dead air, and a structure that carries someone from curious to ready to book."
+      },
+      {
+        "title": "VSL & Ad Creative",
+        "text": "Video sales letters and paid ads made to sell. A clear hook, a clean structure, and a close that actually asks for the sale."
+      },
+      {
+        "title": "Podcast Editing & Clips",
+        "text": "Clean multi-cam episodes, plus the best moments pulled out as clips you can post all week. One recording turns into a month of content, with no extra time on camera."
+      }
+    ]
+  },
+  "work": {
+    "heading": "Work We’ve Shipped Recently",
+    "videos": [
+      {
+        "video": "TR-yFaak-Zs",
+        "label": "Short form edit"
+      },
+      {
+        "video": "V__rxnsSPY0",
+        "label": "Long form edit"
+      },
+      {
+        "video": "KPZ39Q9x1OY",
+        "label": "Short form edit"
+      },
+      {
+        "video": "jZ42Sq9qYr0",
+        "label": "VSL edit"
+      },
+      {
+        "video": "a5fa0qlvk38",
+        "label": "Long form edit"
+      },
+      {
+        "video": "UzKvcKpJQLY",
+        "label": "Short form edit"
+      }
+    ]
+  },
+  "process": {
+    "heading": "How It Works",
+    "steps": [
+      {
+        "title": "Send Your Footage",
+        "text": "Drop the raw files in Google Drive, Dropbox or WeTransfer. No special folders, no setup call."
+      },
+      {
+        "title": "We Edit It",
+        "text": "Your editor cuts, grades, captions and scores the video. First draft usually lands within 48 hours."
+      },
+      {
+        "title": "You Review It",
+        "text": "Want something changed? Say so. Revisions are unlimited until the edit is how you pictured it."
+      },
+      {
+        "title": "You Publish",
+        "text": "Final files arrive named, organised and ready to upload. Then we start the next one."
+      }
+    ]
+  },
+  "numbers": {
+    "heading": "The Numbers So Far",
+    "chartTag": "3.2×",
+    "stats": [
+      {
+        "label": "Views",
+        "value": "480 Million",
+        "change": "32.7%"
+      },
+      {
+        "label": "Watch time",
+        "value": "9.4M Hours",
+        "change": "24.1%"
+      },
+      {
+        "label": "Avg views / video",
+        "value": "400K",
+        "change": "21.9%"
+      },
+      {
+        "label": "Subscribers",
+        "value": "2.1 Million",
+        "change": "27.8%"
+      },
+      {
+        "label": "Client revenue",
+        "value": "$12.6 Million",
+        "change": "19.4%"
+      },
+      {
+        "label": "Client retention",
+        "value": "94.2%",
+        "change": "12.3%"
+      }
+    ],
+    "cards": [
+      {
+        "title": "480M+ Organic Views Generated",
+        "text": "Across client channels on YouTube, TikTok and Instagram, with no ad spend behind any of it. Reach is the start, not the point."
+      },
+      {
+        "title": "3.2× Average Engagement Boost",
+        "text": "More of the right people watching to the end, which is where enquiries actually come from."
+      },
+      {
+        "title": "50+ Editing Playbooks & SOPs",
+        "text": "Hook structures, pacing rules and caption systems we built ourselves and tested across niches."
+      },
+      {
+        "title": "40+ Creators & Brands Served",
+        "text": "From coaches posting their first video to seven-figure brands running several channels at once."
+      },
+      {
+        "title": "2.1M+ Subscribers Gained for Clients",
+        "text": "Growth that stacks month after month once the packaging and pacing get fixed."
+      },
+      {
+        "title": "A Full Creative Team Behind Every Channel",
+        "text": "Editors, motion designers and strategists on one team. Not one freelancer juggling ten clients."
+      },
+      {
+        "title": "48-Hour Average Turnaround",
+        "text": "You get your own editor and a pipeline ready before your footage lands, so posting never stalls."
+      },
+      {
+        "title": "250M+ Views in the Last 12 Months",
+        "text": "All organic, all client work. Shorts, long form, VSLs and podcasts, shipped every week."
+      }
+    ]
+  },
+  "pricing": {
+    "heading": "Simple Pricing",
+    "note": "Limited spots: we only take what we can edit well.",
+    "plans": [
+      {
+        "name": "Starter",
+        "tag": "Try us on three videos.",
+        "price": "$499",
+        "unit": "one-time payment",
+        "badge": "",
+        "inherits": "",
+        "features": [
+          "3 finished videos",
+          "A list of the 20 top videos in your niche to learn from",
+          "15 ready-to-use opening lines for your next videos",
+          "A 30-minute call to walk you through it",
+          "1 round of changes per video",
+          "Ready in 7 working days, or you get a 4th video free"
+        ],
+        "value": "",
+        "button": "Book a Call"
+      },
+      {
+        "name": "Monthly",
+        "tag": "For creators who post every week.",
+        "price": "$695",
+        "unit": "per month",
+        "badge": "Main offer",
+        "inherits": "Everything in Starter, plus:",
+        "features": [
+          "12 videos every month (3 per week)",
+          "Fresh opening lines every month",
+          "A monthly call to review your results",
+          "2 rounds of changes per video",
+          "Minimum 2 months, then cancel any time with 14 days’ notice"
+        ],
+        "value": "If results don’t improve after the first 6 videos, we re-cut the 3 weakest for free.",
+        "button": "Book a Call"
+      },
+      {
+        "name": "Launch",
+        "tag": "For when you have a launch date.",
+        "price": "$995",
+        "unit": "per month",
+        "badge": "",
+        "inherits": "Everything in Monthly, plus:",
+        "features": [
+          "20 videos every month",
+          "4 ad videos or images",
+          "A weekly call",
+          "48-hour turnaround",
+          "Minimum 2 months. Only for launches in the next 60 days."
+        ],
+        "value": "",
+        "button": "Book a Call"
+      }
+    ]
+  },
+  "testimonials": {
+    "heading": "What Clients Say",
+    "items": [
+      {
+        "name": "Kyle Ontra",
+        "role": "Founder & CEO of ExpertAssistants",
+        "photo": "assets/kyle-ontra.jpg",
+        "quote": "He is fantastic with all my video edits. He always gets them to me on time, always replies fast and gives me unlimited edits. So I would definitely recommend working with him if you get the chance."
+      },
+      {
+        "name": "Galit Fuller",
+        "role": "The Connection Company",
+        "photo": "assets/galit-fuller.jpg",
+        "quote": "Working with him has been so easy from the very start. He picks up on exactly the look I’m going for, sends everything back faster than I expect, and never minds reworking a detail until it feels right. I’d happily recommend him to anyone who wants their video done properly."
+      },
+      {
+        "name": "Destanie Okwumabua",
+        "role": "Destanie",
+        "photo": "assets/destanie-okwumabua.jpg",
+        "quote": "I’ve been really impressed with how he handles my content. Every edit comes back polished, he keeps me updated the whole way through, and nothing is ever too much trouble when I ask for a change. If you want someone reliable to trust your videos with, he’s the one."
+      },
+      {
+        "name": "Braden Eveleigh",
+        "role": "Fitness Coach",
+        "photo": "assets/braden-eveleigh.jpg",
+        "quote": "He’s been brilliant to work with from day one. My videos come back sharper than I pictured them, he sticks to every deadline we agree on, and he’s always happy to tweak things until I’m completely satisfied. Anyone serious about their content should be working with him."
+      }
+    ],
+    "disclaimer": "Individual results vary based on niche, consistency, market conditions and how each strategy is implemented. We do not claim these results are achievable for everyone."
+  },
+  "playbooks": {
+    "eyebrow": "Free download · 3 niches",
+    "heading": "Get The Content Playbook For Your Niche",
+    "sub": "What’s holding your industry back, and exactly what to publish to fix it. Pick your niche, enter your email, and it downloads instantly."
+  },
+  "faq": {
+    "heading": "Got Questions?",
+    "items": [
+      {
+        "q": "How does the process work?",
+        "a": "You pay and fill in the intake form. We study your niche and agree the numbers and dates. You send footage. We send your videos on schedule, and we review the numbers together."
+      },
+      {
+        "q": "Do you guarantee views?",
+        "a": "No, and anyone who does is guessing. We control the research, the angle, the cut and the delivery dates. We agree what we’ll track at the start and check it together after the first six videos."
+      },
+      {
+        "q": "How fast is the first video?",
+        "a": "Starter is ready in 7 working days after we receive your footage."
+      },
+      {
+        "q": "Do I need to film?",
+        "a": "Yes. Send raw footage and we do the rest."
+      },
+      {
+        "q": "What if I need more changes?",
+        "a": "Starter includes one round per video and Monthly includes two. Extra rounds are quoted per video."
+      },
+      {
+        "q": "Can I cancel?",
+        "a": "Starter is a one-time payment. Monthly and Launch have a two-month minimum, then 14 days’ notice."
+      },
+      {
+        "q": "Who do you work with?",
+        "a": "Coaches and course creators who sell a program and want more booked calls from short video."
+      }
+    ]
+  },
+  "cta": {
+    "heading": "Ready to Stop Guessing?",
+    "sub": "Every week your content goes out without doing a job is a week those clients book someone else. Tell us a bit about you and we’ll tell you straight whether we can help."
+  },
+  "footer": {
+    "tagline": "From frame to frame, we grow your name. A video editing agency for coaches, creators and brands who need their content to bring in clients, not just views.",
+    "disclaimer": "Disclaimer: This site is not a part of the YouTube, TikTok, Instagram or Facebook websites, and is NOT endorsed by them in any way. All platform names are trademarks of their respective owners.",
+    "copyright": "© 2026 Motionholic.com — All rights reserved."
+  }
+}

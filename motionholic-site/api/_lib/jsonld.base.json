@@ -1,0 +1,268 @@
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "ProfessionalService",
+      "@id": "https://www.motionholic.com/#business",
+      "name": "Motionholic",
+      "alternateName": "Motionholic.com",
+      "url": "https://www.motionholic.com/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://www.motionholic.com/assets/favicon-512.png",
+        "width": 512,
+        "height": 512
+      },
+      "image": "https://www.motionholic.com/assets/founder.jpg",
+      "description": "A video editing agency for coaches, creators and brands who need their content to bring in clients, not just views. Short form video editing for YouTube Shorts, Instagram Reels and TikTok, YouTube video editing, VSL and ad creative, and podcast editing and clips.",
+      "slogan": "From frame to frame, we grow your name.",
+      "email": "ayonpalovi10@gmail.com",
+      "foundingDate": "2021",
+      "priceRange": "$$",
+      "founder": {
+        "@id": "https://www.motionholic.com/#founder"
+      },
+      "sameAs": [
+        "https://www.instagram.com/ovisperspective/",
+        "https://www.linkedin.com/in/ayonkumarpaulovi/"
+      ],
+      "knowsAbout": [
+        "Short form video editing",
+        "YouTube video editing",
+        "YouTube Shorts",
+        "Instagram Reels",
+        "TikTok",
+        "Video sales letters (VSL)",
+        "Ad creative",
+        "Podcast editing",
+        "Captions and sound design"
+      ],
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Video editing services",
+        "itemListElement": [
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Short Form Video Editing",
+              "description": "Shorts, Reels and TikToks with captions, sound design and pacing built to hold the right viewer.",
+              "serviceType": "Video editing",
+              "provider": {
+                "@id": "https://www.motionholic.com/#business"
+              },
+              "audience": {
+                "@type": "Audience",
+                "audienceType": "Coaches, course creators, creators and brands"
+              }
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "YouTube Video Editing",
+              "description": "Long-form YouTube edits with tight intros, no dead air and a structure that builds trust.",
+              "serviceType": "Video editing",
+              "provider": {
+                "@id": "https://www.motionholic.com/#business"
+              },
+              "audience": {
+                "@type": "Audience",
+                "audienceType": "Coaches, course creators, creators and brands"
+              }
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "VSL & Ad Creative",
+              "description": "Video sales letters and paid ads with a clear hook, a clean structure and a close that asks for the sale.",
+              "serviceType": "Video editing",
+              "provider": {
+                "@id": "https://www.motionholic.com/#business"
+              },
+              "audience": {
+                "@type": "Audience",
+                "audienceType": "Coaches, course creators, creators and brands"
+              }
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Podcast Editing & Clips",
+              "description": "Clean multi-cam podcast episodes plus short clips pulled from each recording.",
+              "serviceType": "Video editing",
+              "provider": {
+                "@id": "https://www.motionholic.com/#business"
+              },
+              "audience": {
+                "@type": "Audience",
+                "audienceType": "Coaches, course creators, creators and brands"
+              }
+            }
+          }
+        ]
+      },
+      "makesOffer": [
+        {
+          "@type": "Offer",
+          "name": "Starter",
+          "description": "3 finished videos, ready in 7 working days. One-time payment.",
+          "price": 499,
+          "priceCurrency": "USD",
+          "priceSpecification": {
+            "@type": "UnitPriceSpecification",
+            "price": 499,
+            "priceCurrency": "USD"
+          },
+          "seller": {
+            "@id": "https://www.motionholic.com/#business"
+          }
+        },
+        {
+          "@type": "Offer",
+          "name": "Monthly",
+          "description": "12 videos every month (3 per week). Minimum 2 months.",
+          "price": 695,
+          "priceCurrency": "USD",
+          "priceSpecification": {
+            "@type": "UnitPriceSpecification",
+            "price": 695,
+            "priceCurrency": "USD",
+            "unitCode": "MON",
+            "unitText": "per month"
+          },
+          "seller": {
+            "@id": "https://www.motionholic.com/#business"
+          }
+        },
+        {
+          "@type": "Offer",
+          "name": "Launch",
+          "description": "20 videos every month plus 4 ad videos or images and 48-hour turnaround. Minimum 2 months.",
+          "price": 995,
+          "priceCurrency": "USD",
+          "priceSpecification": {
+            "@type": "UnitPriceSpecification",
+            "price": 995,
+            "priceCurrency": "USD",
+            "unitCode": "MON",
+            "unitText": "per month"
+          },
+          "seller": {
+            "@id": "https://www.motionholic.com/#business"
+          }
+        }
+      ]
+    },
+    {
+      "@type": "Person",
+      "@id": "https://www.motionholic.com/#founder",
+      "name": "Ayon Kumar Paul Ovi",
+      "jobTitle": "Founder",
+      "worksFor": {
+        "@id": "https://www.motionholic.com/#business"
+      },
+      "image": "https://www.motionholic.com/assets/founder.jpg",
+      "sameAs": [
+        "https://www.linkedin.com/in/ayonkumarpaulovi/"
+      ]
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://www.motionholic.com/#website",
+      "url": "https://www.motionholic.com/",
+      "name": "Motionholic",
+      "inLanguage": "en",
+      "publisher": {
+        "@id": "https://www.motionholic.com/#business"
+      }
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://www.motionholic.com/#webpage",
+      "url": "https://www.motionholic.com/",
+      "name": "Video Editing Agency for Creators, Coaches & Brands | Motionholic",
+      "isPartOf": {
+        "@id": "https://www.motionholic.com/#website"
+      },
+      "about": {
+        "@id": "https://www.motionholic.com/#business"
+      },
+      "inLanguage": "en",
+      "primaryImageOfPage": {
+        "@type": "ImageObject",
+        "url": "https://www.motionholic.com/assets/founder.jpg"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://www.motionholic.com/#faq",
+      "isPartOf": {
+        "@id": "https://www.motionholic.com/#webpage"
+      },
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How does the process work?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "You pay and fill in the intake form. We study your niche and agree the numbers and dates. You send footage. We send your videos on schedule, and we review the numbers together."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do you guarantee views?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No, and anyone who does is guessing. We control the research, the angle, the cut and the delivery dates. We agree what we’ll track at the start and check it together after the first six videos."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How fast is the first video?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Starter is ready in 7 working days after we receive your footage."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do I need to film?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Send raw footage and we do the rest."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What if I need more changes?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Starter includes one round per video and Monthly includes two. Extra rounds are quoted per video."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I cancel?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Starter is a one-time payment. Monthly and Launch have a two-month minimum, then 14 days’ notice."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Who do you work with?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Coaches and course creators who sell a program and want more booked calls from short video."
+          }
+        }
+      ]
+    }
+  ]
+}
